@@ -1,0 +1,9 @@
+# ninja log v5
+62	3153	7646883935160949	financeManager_autogen/timestamp	2b4095d42787ed2c
+62	3153	7646883935160949	financeManager_autogen/mocs_compilation.cpp	2b4095d42787ed2c
+62	3153	7646883935160949	C:/Users/P52s/Desktop/UNI/OOP(CPP)/KP1/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop-Debug/financeManager_autogen/timestamp	2b4095d42787ed2c
+62	3153	7646883935160949	C:/Users/P52s/Desktop/UNI/OOP(CPP)/KP1/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop-Debug/financeManager_autogen/mocs_compilation.cpp	2b4095d42787ed2c
+3164	8983	7646883994004492	CMakeFiles/financeManager.dir/financeManager_autogen/mocs_compilation.cpp.obj	c3c91012dafbefab
+3170	8991	7646883994054372	CMakeFiles/financeManager.dir/main.cpp.obj	818d47482ffb9a34
+3174	9986	7646884004015647	CMakeFiles/financeManager.dir/mainwindow.cpp.obj	78b5ea366bc28ebe
+9986	10968	7646884013407375	financeManager.exe	6aa07f34119fe260
