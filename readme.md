@@ -5,8 +5,49 @@
 ### Authors
 | Name               | Role                                      |
 |--------------------|-------------------------------------------|
-| **Robert Šatkevič** | Backend Developer, Documentation Writer   |
-| **Aurimas Vižinis** | Frontend Developer, Documentation Writer  |
+| **Robert Šatkevič** | Backend Developer, Documentation Writer, Tester, Quality Assurance   |
+| **Aurimas Vižinis** | Frontend Developer, Documentation Writer, Presenter, Communication Specialist  |
+
+---
+
+## Description
+The Finance Manager App is a comprehensive tool designed to help users manage their finances effectively. It allows users to track income and expenses, apply filters, and visualize data through tables and pie charts. The app also supports exporting filtered data for further analysis.
+
+---
+
+## Features Overview
+
+### Use Case Diagram
+![Use Case Diagram](./image1.png)
+
+- **User Interactions:**
+  - The diagram illustrates how the user interacts with the system, including choosing between income or expense views, adding new entries, filtering data by value, type, or date, and saving/exporting data as tables or pie charts.
+
+---
+
+## Analysis
+
+### Data Flow Overview
+
+#### Flowchart Diagram
+![Flowchart](./image2.png)
+
+- This diagram shows the flow of data within the application:
+  1. **User Input** is validated.
+  2. Valid data is saved to a **Storage File**.
+  3. Filters are applied to view data as a **Table** or **Pie Chart**.
+  4. Data can be exported or saved.
+
+---
+
+### Application Flow
+
+#### Component Interaction Diagram
+![Application Logic](./image3.png)
+
+- This diagram represents the interaction between components:
+  - The **Application** communicates with **View Controllers** (Main and Add Entry).
+  - **View Controllers** interact with the **Data Manager**, which handles data storage and retrieval from the **Storage File**.
 
 ---
 
@@ -19,54 +60,4 @@
 | **Storage**   | Local File System           |
 | **Visualization** | Pie Charts, Tables |
 | **Tools**     | QT Creator, Smartdraw, Git/GitHub |
-
----
-
-## Features Overview
-
-### Use Case Diagram
-![Use Case Diagram](./image1.png)
-
-- **User Interactions:**
-  - Choose between income or expense view
-  - Add new financial entries
-  - Save and export data
-  - Filter data by value, type, or date
-  - Export filtered data as a table or pie chart
-
----
-
-## Data Flow Overview
-
-### Flowchart Diagram
-![Flowchart](./image2.png)
-
-1. **User Input**
-2. **Data Validation**
-   - Shows **Errors** or proceeds with **Valid Data**
-3. **Valid Data** is saved to a **Storage File**
-4. Apply **Filters**
-   - View as **Table** or **Pie Chart**
-5. **Export/Save Data**
-
----
-
-## Application Flow
-
-### Component Interaction Diagram
-![Application Logic](./image3.png)
-
-- The **Application** sends and receives:
-  - Entry Data
-  - Success/Error responses
-  - Filtered list of entries
-- **View Controllers** (Add / Main) interact with the **Data Manager**
-- The **Data Manager** handles communication with the **Storage File**
-
----
-
-## Export Formats
-- Filtered entries can be exported:
-  - As tables
-  - As pie charts for visual breakdown
 
