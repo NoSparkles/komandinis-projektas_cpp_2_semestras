@@ -60,4 +60,27 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 | **Storage**   | Local File System           |
 | **Visualization** | Pie Charts, Tables |
 | **Tools**     | QT Creator, Smartdraw, Git/GitHub |
+---
+## Work Contribution Log (LFF Format)
 
+### Aurimas Vižinis
+- **2025-03-23** — *11:30–13:30* — **120 min**  
+  **Activity:** Programavimas  
+  **Comments:** Frontend dalies programavimas  
+
+- **2025-03-26** — *11:00–13:00* — **120 min**  
+  **Activity:** Planavimas, PSP veikla  
+  **Comments:** UML diagramos, pildoma laiko fiksavimo lentelė  
+
+- **2025-04-05** — *18:00–19:10* — **70 min**  
+  **Activity:** Atsiskaitymas  
+  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas  
+
+### Robert Šatkevič
+- **2025-03-26** — *11:00–13:00* — **120 min**  
+  **Activity:** Planavimas, PSP veikla  
+  **Comments:** UML diagramos, pildoma laiko fiksavimo lentelė  
+
+- **2025-04-05** — *18:00–19:10* — **70 min**  
+  **Activity:** Atsiskaitymas  
+  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas  
