@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\financeManager.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\financeManager.dir/objects.a @CMakeFiles\financeManager.dir\objects1.rsp
-C:\msys64\mingw64\bin\g++.exe -DQT_QML_DEBUG -g -mwindows -Wl,--whole-archive CMakeFiles\financeManager.dir/objects.a -Wl,--no-whole-archive -o financeManager.exe -Wl,--out-implib,libfinanceManager.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\financeManager.dir\linkLibs.rsp

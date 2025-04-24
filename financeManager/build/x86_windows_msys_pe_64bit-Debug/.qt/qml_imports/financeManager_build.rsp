@@ -1,9 +1,0 @@
--rootPath
-C:/Users/P52s/Desktop/UNI/OOP(CPP)/KP1/komandinis-projektas_cpp_2_semestras/financeManager
--cmake-output
--output-file
-C:/Users/P52s/Desktop/UNI/OOP(CPP)/KP1/komandinis-projektas_cpp_2_semestras/financeManager/build/x86_windows_msys_pe_64bit-Debug/.qt/qml_imports/financeManager_build.cmake
--importPath
-C:/Users/P52s/Desktop/UNI/OOP(CPP)/KP1/komandinis-projektas_cpp_2_semestras/financeManager/build/x86_windows_msys_pe_64bit-Debug
--importPath
-C:/Qt/6.10.0/mingw_64/qml

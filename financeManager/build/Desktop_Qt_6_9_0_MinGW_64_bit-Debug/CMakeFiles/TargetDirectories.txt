@@ -1,9 +1,0 @@
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/financeManager.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/list_install_components.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/install.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/install/local.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/install/strip.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/financeManager_autogen_timestamp_deps.dir
-C:/Users/Home/Desktop/mokslai/objektinis programavimas C++/komandinis-projektas_cpp_2_semestras/financeManager/build/Desktop_Qt_6_9_0_MinGW_64_bit-Debug/CMakeFiles/financeManager_autogen.dir
