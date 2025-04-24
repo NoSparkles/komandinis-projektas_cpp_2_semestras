@@ -26,6 +26,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(financeManager
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        expense.csv income.csv
+        dao/EntryDAO.cpp dao/EntryDAO.h data/expense.csv data/income.csv model/Entry.cpp model/Entry.h model/Expense.cpp model/Expense.h model/Income.cpp model/Income.h service/EntryService.cpp service/EntryService.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET financeManager APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

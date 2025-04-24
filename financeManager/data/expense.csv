@@ -1,0 +1,11 @@
+ID,Type,Date,Name,Amount
+1,Transport,2025-04-02,Train Pass,50.00
+2,Food,2025-04-03,Grocery Shopping,120.00
+3,Rent,2025-04-04,Monthly Rent,1200.00
+4,Entertainment,2025-04-06,Movie Tickets,40.00
+5,Healthcare,2025-04-09,Doctor Visit,150.00
+6,Transport,2025-04-11,Gas Refill,60.00
+7,Food,2025-04-14,Restaurant Dinner,80.00
+8,Rent,2025-04-17,Utility Bills,200.00
+9,Entertainment,2025-04-19,Concert Ticket,100.00
+10,Healthcare,2025-04-22,Pharmacy Purchase,30.00
