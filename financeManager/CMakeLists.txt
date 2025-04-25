@@ -13,7 +13,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Charts)
 
-
+file(COPY data DESTINATION ${CMAKE_BINARY_DIR})
 
 set(PROJECT_SOURCES
         main.cpp

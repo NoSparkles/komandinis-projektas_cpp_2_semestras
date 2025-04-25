@@ -5,7 +5,7 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QChart>
-
+#include "service/EntryService.h"  // ✅ Added this include
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,6 +23,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    EntryService* entryService;          // ✅ Added this member
     void updateChartAndTable(const QString &mode);
 };
+
 #endif // MAINWINDOW_H
