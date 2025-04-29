@@ -11,12 +11,14 @@
 #include <QAction>
 #include <QDebug>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     entryService = new EntryService("data/income.csv", "data/expense.csv");
+
 
 
     // Dark theme palette setup
@@ -43,17 +45,22 @@ MainWindow::MainWindow(QWidget *parent)
     QAction *expensesAction = modeMenu->addAction("Expenses");
     QAction *incomeAction = modeMenu->addAction("Income");
 
+    updateTypeFilter("Expenses");
+
     ui->modeButton->setMenu(modeMenu);
 
     connect(expensesAction, &QAction::triggered, this, [=]() {
         ui->modeButton->setText("Expenses");
         updateChartAndTable("Expenses");
+        updateTypeFilter("Expenses");
     });
 
     connect(incomeAction, &QAction::triggered, this, [=]() {
         ui->modeButton->setText("Income");
         updateChartAndTable("Income");
+        updateTypeFilter("Income");
     });
+
 
     ui->modeButton->setText("Expenses");
     updateChartAndTable("Expenses");
@@ -64,6 +71,21 @@ MainWindow::~MainWindow()
     delete entryService;
     delete ui;
 }
+
+void MainWindow::updateTypeFilter(const QString &mode) {
+    std::vector<std::string> types;
+    if(mode == "Expenses") {
+        types = Expense::getTypes();
+    } else {
+        types = Income::getTypes();
+    }
+    ui->typeSelect->clear();
+    ui->typeSelect->addItem("None");
+    for (const std::string &type : types) {
+        ui->typeSelect->addItem(QString::fromStdString(type));
+    }
+}
+
 
 void MainWindow::updateChartAndTable(const QString &mode)
 {
@@ -90,15 +112,33 @@ void MainWindow::updateChartAndTable(const QString &mode)
         for (int i = 0; i < expenses.size(); ++i) {
             const auto &e = expenses[i];
             ui->dataTable->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(e.getType())));
+
             ui->dataTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(e.getDate())));
             ui->dataTable->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(e.getName())));
             ui->dataTable->setItem(i, 3, new QTableWidgetItem(QString::number(e.getAmount())));
             totals[QString::fromStdString(e.getType())] += e.getAmount();
         }
 
-        for (auto it = totals.begin(); it != totals.end(); ++it) {
-            series->append(it.key(), it.value());
+        int i = 0;
+        int totalItems = totals.size();
+
+        for (auto it = totals.begin(); it != totals.end(); ++it, ++i) {
+            QPieSlice* slice = series->append(it.key(), it.value());
+
+            // Generate a unique hue based on index
+            int hue = (360 * i) / totalItems;  // evenly spaced around color wheel
+            QColor color = QColor::fromHsv(hue, 200, 255);  // vibrant and bright
+
+            slice->setBrush(color);
+            slice->setBrush(color);
+            slice->setPen(QPen(Qt::NoPen));
+            slice->setLabelBrush(Qt::white);
+            slice->setLabelFont(QFont("Arial", 10));
         }
+
+
+
+
     } else if (mode == "Income") {
         auto incomes = entryService->getAllIncomes();
         ui->dataTable->setRowCount(static_cast<int>(incomes.size()));
@@ -115,9 +155,23 @@ void MainWindow::updateChartAndTable(const QString &mode)
             totals[QString::fromStdString(e.getType())] += e.getAmount();
         }
 
-        for (auto it = totals.begin(); it != totals.end(); ++it) {
-            series->append(it.key(), it.value());
+        int i = 0;
+        int totalItems = totals.size();
+
+        for (auto it = totals.begin(); it != totals.end(); ++it, ++i) {
+            QPieSlice* slice = series->append(it.key(), it.value());
+
+            // Generate a unique hue based on index
+            int hue = (360 * i) / totalItems;  // evenly spaced around color wheel
+            QColor color = QColor::fromHsv(hue, 200, 255);  // vibrant and bright
+
+            slice->setBrush(color);
+            slice->setPen(QPen(Qt::NoPen));
+            slice->setLabelBrush(Qt::white);
+            slice->setLabelFont(QFont("Arial", 10));
         }
+
+
     }
 
     QChart *chart = new QChart();
@@ -125,13 +179,20 @@ void MainWindow::updateChartAndTable(const QString &mode)
     chart->setBackgroundBrush(QBrush(QColor("#1e1e1e")));
     chart->setTitleBrush(QBrush(Qt::white));
     chart->setTitle(mode + " Pie Chart");
-    series->setLabelsVisible(true);
-    series->setLabelsPosition(QPieSlice::LabelOutside);
+
+
+
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignLeft);
+    chart->legend()->setLabelColor(Qt::white);
+    chart->legend()->setFont(QFont("Arial", 10));
+
+
 
     for (auto slice : series->slices()) {
         slice->setLabelBrush(Qt::white);
         slice->setLabelFont(QFont("Arial", 10));
-        slice->setPen(Qt::NoPen);
+        slice->setPen(QPen(Qt::NoPen));
     }
 
     QChartView *chartView = new QChartView(chart);

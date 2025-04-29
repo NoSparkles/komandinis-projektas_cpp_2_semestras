@@ -23,8 +23,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    EntryService* entryService;          // ✅ Added this member
+    EntryService* entryService;        // ✅ Added this member
     void updateChartAndTable(const QString &mode);
+    void updateTypeFilter(const QString &mode);
 };
 
 #endif // MAINWINDOW_H
