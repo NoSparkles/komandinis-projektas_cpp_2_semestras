@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-const std::vector<std::string> Expense::expenseTypes = {"Transport", "Food", "Rent", "Entertainment", "Healthcare"};
+const std::vector<std::string> Expense::expenseTypes = {"Transport", "Food", "Rent", "Entertainment", "Healthcare", "Other"};
 
 Expense::Expense(const std::string& type, const std::string& date, const std::string& name, double amount)
     : Expense(0, type, date, name, amount) {}

@@ -137,8 +137,6 @@ void MainWindow::updateChartAndTable(const QString &mode)
         }
 
 
-
-
     } else if (mode == "Income") {
         auto incomes = entryService->getAllIncomes();
         ui->dataTable->setRowCount(static_cast<int>(incomes.size()));
