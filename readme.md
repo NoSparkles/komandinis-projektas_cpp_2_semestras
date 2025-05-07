@@ -7,6 +7,7 @@
 |--------------------|-------------------------------------------|
 | **Robert Šatkevič** | Backend Developer, Documentation Writer, Tester, Quality Assurance   |
 | **Aurimas Vižinis** | Frontend Developer, Documentation Writer, Presenter, Communication Specialist  |
+| **Dominykas Pavlavičius** | Programmer, Tester |
 
 ---
 
@@ -37,7 +38,6 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
   2. Valid data is saved to a **Storage File**.
   3. Filters are applied to view data as a **Table** or **Pie Chart**.
   4. Data can be exported or saved.
-
 ---
 
 ### Application Flow
@@ -50,6 +50,9 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
   - **View Controllers** interact with the **Data Manager**, which handles data storage and retrieval from the **Storage File**.
 
 ---
+
+### Class diagram
+![Class Diagram](./class_diagram.png)
 
 ## Technology Stack
 
@@ -74,7 +77,17 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 
 - **2025-04-05** — *18:00–19:10* — **70 min**  
   **Activity:** Atsiskaitymas  
-  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas  
+  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas
+
+- **2025-04-25** — *15:30—16:30* — **60 min**
+  **Activity:** Programavimas
+  **Comments:** Frontend dalies koregavimas bei atnaujinimas
+
+- **2025-05-07** — *13:00—15:00* — **120 min** 
+  **Activity:** PSP veikla, Komandinis darbas
+  **Comments:** Klasių diagrama
+
+
 
 ### Robert Šatkevič
 - **2025-03-26** — *11:00–13:00* — **120 min**  
@@ -83,4 +96,21 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 
 - **2025-04-05** — *18:00–19:10* — **70 min**  
   **Activity:** Atsiskaitymas  
-  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas  
+  **Comments:** Klaidų taisymas: readme, UML diagramų taisymas
+
+- **2025-04-24** — *09:00–11:30* — **150 min** 
+  **Activity:** Programavimas
+  **Comments:** Backend dalies kodavimas (DAO, service, model)
+
+- **2025-05-07** — *13:00—15:00* — **120 min** 
+  **Activity:** PSP veikla, Komandinis darbas
+  **Comments:** Klasių diagrama
+
+### Dominykas Pavlavičius
+- **2025-04-25** — *10:00—11:40* — **100 min**
+  **Activity:** Kodo peržiūra, Programavimas
+  **Comments:** Sujungiau Backend su Frontend
+
+- **2025-05-07** — *13:00—15:00* — **120 min** 
+  **Activity:** PSP veikla, Komandinis darbas
+  **Comments:** Klasių diagrama
