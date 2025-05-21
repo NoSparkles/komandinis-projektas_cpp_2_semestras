@@ -11,6 +11,14 @@
 #include <QAction>
 #include <QDebug>
 
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QFormLayout>
+#include <QDoubleSpinBox>
+#include <QDateEdit>
+
+#include "model/Income.h"
+#include "model/Expense.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -64,6 +72,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->modeButton->setText("Expenses");
     updateChartAndTable("Expenses");
+
+
+    connect(ui->addButton, &QPushButton::clicked, this, &MainWindow::onAddButtonClicked);
+    ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->dataTable, &QTableWidget::customContextMenuRequested, this, &MainWindow::onTableContextMenu);
+    connect(ui->dataTable, &QTableWidget::cellChanged, this, &MainWindow::onTableCellChanged);
 }
 
 MainWindow::~MainWindow()
@@ -71,6 +85,187 @@ MainWindow::~MainWindow()
     delete entryService;
     delete ui;
 }
+
+void MainWindow::onTableCellChanged(int row, int column) {
+    static bool updating = false;
+    if (updating) return;
+    updating = true;
+
+    QString mode = ui->modeButton->text();
+
+    QString type = ui->dataTable->item(row, 0)->text();
+    QString date = ui->dataTable->item(row, 1)->text();
+    QString name = ui->dataTable->item(row, 2)->text();
+    double amount = ui->dataTable->item(row, 3)->text().toDouble();
+
+    bool updated = false;
+
+    if (mode == "Expenses") {
+        auto expenses = entryService->getAllExpenses();
+        if (row < expenses.size()) {
+            Expense oldExpense = expenses[row];
+            Expense newExpense = oldExpense;
+            newExpense.setType(type.toStdString());
+            newExpense.setDate(date.toStdString());
+            newExpense.setName(name.toStdString());
+            newExpense.setAmount(amount);
+            entryService->updateExpense(oldExpense, newExpense);
+            updated = true;
+        }
+    } else {
+        auto incomes = entryService->getAllIncomes();
+        if (row < incomes.size()) {
+            Income oldIncome = incomes[row];
+            Income newIncome = oldIncome;
+            newIncome.setType(type.toStdString());
+            newIncome.setDate(date.toStdString());
+            newIncome.setName(name.toStdString());
+            newIncome.setAmount(amount);
+            entryService->updateIncome(oldIncome, newIncome);
+            updated = true;
+        }
+    }
+
+    if (updated) {
+        entryService->saveEntriesToFile();
+        updateChartAndTable(mode);
+    }
+
+    updating = false;
+}
+void MainWindow::onTableContextMenu(const QPoint &pos) {
+    QModelIndex index = ui->dataTable->indexAt(pos);
+    if (!index.isValid()) return;
+
+    QMenu contextMenu;
+    QAction *deleteAction = contextMenu.addAction("Delete Entry");
+    QAction *selectedAction = contextMenu.exec(ui->dataTable->viewport()->mapToGlobal(pos));
+    if (selectedAction == deleteAction) {
+        int row = index.row();
+
+        // Get entry data from the row
+        QString type = ui->dataTable->item(row, 0)->text();
+        QString date = ui->dataTable->item(row, 1)->text();
+        QString name = ui->dataTable->item(row, 2)->text();
+        double amount = ui->dataTable->item(row, 3)->text().toDouble();
+
+        QString mode = ui->modeButton->text();
+
+        bool deleted = false;
+        if (mode == "Expenses") {
+            auto expenses = entryService->getAllExpenses();
+            for (const auto& e : expenses) {
+                if (QString::fromStdString(e.getType()) == type &&
+                    QString::fromStdString(e.getDate()) == date &&
+                    QString::fromStdString(e.getName()) == name &&
+                    e.getAmount() == amount) {
+                    entryService->removeExpense(e);
+                    deleted = true;
+                    break;
+                }
+            }
+        } else {
+            auto incomes = entryService->getAllIncomes();
+            for (const auto& e : incomes) {
+                if (QString::fromStdString(e.getType()) == type &&
+                    QString::fromStdString(e.getDate()) == date &&
+                    QString::fromStdString(e.getName()) == name &&
+                    e.getAmount() == amount) {
+                    entryService->removeIncome(e);
+                    deleted = true;
+                    break;
+                }
+            }
+        }
+
+        if (deleted) {
+            entryService->saveEntriesToFile();
+            updateChartAndTable(mode);
+        } else {
+            QMessageBox::warning(this, "Delete Failed", "Could not find the entry to delete.");
+        }
+    }
+
+}
+
+void MainWindow::onAddButtonClicked() {
+    QString mode = ui->modeButton->text();
+
+    // Create dialog
+    QDialog dialog(this);
+    dialog.setWindowTitle("Add Entry");
+
+    QFormLayout form(&dialog);
+
+    // Type ComboBox
+    QComboBox *typeCombo = new QComboBox(&dialog);
+    QStringList typeList;
+    if (mode == "Expenses") {
+        for (const auto& t : Expense::getTypes()) typeList << QString::fromStdString(t);
+    } else {
+        for (const auto& t : Income::getTypes()) typeList << QString::fromStdString(t);
+    }
+    typeCombo->addItems(typeList);
+    form.addRow("Type:", typeCombo);
+
+    QDateEdit *dateEdit = new QDateEdit(QDate::currentDate(), &dialog);
+    dateEdit->setCalendarPopup(true);
+    form.addRow("Date:", dateEdit);
+
+    // Name LineEdit
+    QLineEdit *nameEdit = new QLineEdit(&dialog);
+    form.addRow("Name:", nameEdit);
+
+    // Amount DoubleSpinBox
+    QDoubleSpinBox *amountSpin = new QDoubleSpinBox(&dialog);
+    amountSpin->setRange(-1000000, 1000000);
+    amountSpin->setDecimals(2);
+    form.addRow("Amount:", amountSpin);
+
+    // Dialog buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                               Qt::Horizontal, &dialog);
+    form.addRow(&buttonBox);
+
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    // Show dialog
+    if (dialog.exec() == QDialog::Accepted) {
+        QString type = typeCombo->currentText();
+        QString name = nameEdit->text();
+        double amount = amountSpin->value();
+        QString date = dateEdit->date().toString("yyyy-MM-dd");
+
+        if (name.isEmpty()) {
+            QMessageBox::warning(this, "Input Error", "Name cannot be empty.");
+            return;
+        }
+
+
+        if (mode == "Expenses") {
+            Expense newExpense(0, type.toStdString(), date.toStdString(), name.toStdString(), amount);
+            entryService->addExpense(newExpense);
+        } else {
+            Income newIncome(0, type.toStdString(), date.toStdString(), name.toStdString(), amount);
+            entryService->addIncome(newIncome);
+        }
+
+
+        entryService->saveEntriesToFile();
+
+        updateChartAndTable(mode);
+
+
+        QMessageBox::information(this, "Entry Added",
+                                 QString("Type: %1\nName: %2\nAmount: %3\nDate: %4")
+                                     .arg(type, name).arg(amount).arg(date));
+    }
+
+    updateChartAndTable(mode);
+
+}
+
 
 void MainWindow::updateTypeFilter(const QString &mode) {
     std::vector<std::string> types;
@@ -91,7 +286,22 @@ void MainWindow::updateChartAndTable(const QString &mode)
 {
     QPieSeries *series = new QPieSeries();
 
-    // Clear previous layout
+    double totalIncome = 0.0;
+    double totalExpense = 0.0;
+
+    auto incomes = entryService->getAllIncomes();
+    for (const auto& income : incomes) {
+        totalIncome += income.getAmount();
+    }
+
+    auto expenses = entryService->getAllExpenses();
+    for (const auto& expense : expenses) {
+        totalExpense += expense.getAmount();
+    }
+
+    double balance = totalIncome - totalExpense;
+    ui->totalBalance->setText(QString::number(balance, 'f', 2) + " Eur");
+
     QLayout *oldLayout = ui->chartContainer->layout();
     if (oldLayout) {
         QLayoutItem *item;
@@ -102,8 +312,11 @@ void MainWindow::updateChartAndTable(const QString &mode)
         delete oldLayout;
     }
 
+
     if (mode == "Expenses") {
-        auto expenses = entryService->getAllExpenses();
+
+
+
         ui->dataTable->setRowCount(static_cast<int>(expenses.size()));
         ui->dataTable->setColumnCount(4);
         ui->dataTable->setHorizontalHeaderLabels(QStringList() << "Type" << "Date" << "Name" << "Amount");
@@ -135,6 +348,8 @@ void MainWindow::updateChartAndTable(const QString &mode)
             slice->setLabelBrush(Qt::white);
             slice->setLabelFont(QFont("Arial", 10));
         }
+
+
 
 
     } else if (mode == "Income") {

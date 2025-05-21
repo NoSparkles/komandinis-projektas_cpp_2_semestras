@@ -90,7 +90,7 @@
      <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
       <x>920</x>

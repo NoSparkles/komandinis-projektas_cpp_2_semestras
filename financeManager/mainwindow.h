@@ -23,9 +23,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    EntryService* entryService;        
+    EntryService* entryService;
+    void onAddButtonClicked();
     void updateChartAndTable(const QString &mode);
     void updateTypeFilter(const QString &mode);
+    void onTableContextMenu(const QPoint &pos);
+    void onTableCellChanged(int row, int column);
 };
 
 #endif // MAINWINDOW_H

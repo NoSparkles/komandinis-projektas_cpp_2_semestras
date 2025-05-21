@@ -25,6 +25,8 @@ public:
     void updateExpense(const Expense& oldExpense, const Expense& newExpense);
     void removeExpense(const Expense& expense);
 
+
+
     // File paths
     std::string getIncomePath() const;
     std::string getExpensePath() const;
