@@ -324,7 +324,9 @@ void MainWindow::updateChartAndTable(const QString &mode)
         QMap<QString, double> totals;
         for (int i = 0; i < expenses.size(); ++i) {
             const auto &e = expenses[i];
-            ui->dataTable->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(e.getType())));
+            QTableWidgetItem* typeItem = new QTableWidgetItem(QString::fromStdString(e.getType()));
+            typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
+            ui->dataTable->setItem(i, 0, typeItem);
 
             ui->dataTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(e.getDate())));
             ui->dataTable->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(e.getName())));
