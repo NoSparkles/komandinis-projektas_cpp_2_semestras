@@ -5,12 +5,11 @@ EntryService::EntryService(const std::string& incomePath, const std::string& exp
     : entryDAO(incomePath, expensePath) {}
 
 // Retrieve all incomes
-std::vector<Income> EntryService::getAllIncomes() {
+const std::vector<Income>&  EntryService::getAllIncomes()  {
     return entryDAO.getAllIncomes();
 }
 
-// Retrieve all expenses
-std::vector<Expense> EntryService::getAllExpenses() {
+const std::vector<Expense>& EntryService::getAllExpenses() {
     return entryDAO.getAllExpenses();
 }
 

@@ -5,12 +5,22 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QChart>
-#include "service/EntryService.h" 
+#include <QMenu>
+#include <QPoint>
+
+#include <memory>
+#include <limits>
+
+#include "service/EntryService.h"
+
+#include "filter/BaseFilter.h"
+#include "filter/DateFilter.h"
+#include "filter/AmountFilter.h"
+#include "filter/TypeFilter.h"
+#include "filter/NameFilter.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -18,17 +28,23 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
-private:
-    Ui::MainWindow *ui;
-    EntryService* entryService;
+private slots:
     void onAddButtonClicked();
-    void updateChartAndTable(const QString &mode);
-    void updateTypeFilter(const QString &mode);
     void onTableContextMenu(const QPoint &pos);
     void onTableCellChanged(int row, int column);
+
+    void updateTypeFilter(const QString &mode);
+
+private:
+    std::shared_ptr<Filter> createFilterChain() const;
+
+    void updateChartAndTable(const QString &mode);
+
+    Ui::MainWindow *ui {nullptr};
+    EntryService   *entryService {nullptr};
 };
 
-#endif // MAINWINDOW_H
+#endif

@@ -19,14 +19,15 @@ EntryDAO::~EntryDAO() {
 }
 
 // Retrieve all incomes
-std::vector<Income> EntryDAO::getAllIncomes() {
+const std::vector<Income>&  EntryDAO::getAllIncomes() {
     return incomes;
 }
 
 // Retrieve all expenses
-std::vector<Expense> EntryDAO::getAllExpenses() {
+const std::vector<Expense>& EntryDAO::getAllExpenses() {
     return expenses;
 }
+
 
 // Add new income entry
 void EntryDAO::addIncome(const Income& income) {

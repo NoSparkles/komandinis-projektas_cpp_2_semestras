@@ -25,8 +25,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->dateEdit  ->setDate(QDate(2000, 1, 1));
+    ui->dateEdit_2->setDate(QDate::currentDate());
+
     entryService = new EntryService("data/income.csv", "data/expense.csv");
 
+    connect(ui->typeSelect, &QComboBox::currentTextChanged,
+            this, [this]{ updateChartAndTable(ui->modeButton->text()); });
+
+    connect(ui->pushButton_3, &QPushButton::clicked,
+            this, [this]{ updateChartAndTable(ui->modeButton->text()); });
 
 
     // Dark theme palette setup
@@ -86,53 +94,48 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onTableCellChanged(int row, int column) {
-    static bool updating = false;
-    if (updating) return;
-    updating = true;
+void MainWindow::onTableCellChanged(int row, int column)
+{
+    if (column == 0) return;
 
-    QString mode = ui->modeButton->text();
+    static bool reentry = false;
+    if (reentry) return;
+    reentry = true;
 
-    QString type = ui->dataTable->item(row, 0)->text();
-    QString date = ui->dataTable->item(row, 1)->text();
-    QString name = ui->dataTable->item(row, 2)->text();
-    double amount = ui->dataTable->item(row, 3)->text().toDouble();
+    /* retrieve the Entry* we stored in column 0 */
+    QTableWidgetItem *first = ui->dataTable->item(row, 0);
+    if (!first) { reentry = false; return; }
 
-    bool updated = false;
+    quintptr raw   = first->data(Qt::UserRole).value<quintptr>();
+    Entry   *entry = reinterpret_cast<Entry*>(raw);
+    if (!entry) { reentry = false; return; }
 
-    if (mode == "Expenses") {
-        auto expenses = entryService->getAllExpenses();
-        if (row < expenses.size()) {
-            Expense oldExpense = expenses[row];
-            Expense newExpense = oldExpense;
-            newExpense.setType(type.toStdString());
-            newExpense.setDate(date.toStdString());
-            newExpense.setName(name.toStdString());
-            newExpense.setAmount(amount);
-            entryService->updateExpense(oldExpense, newExpense);
-            updated = true;
-        }
-    } else {
-        auto incomes = entryService->getAllIncomes();
-        if (row < incomes.size()) {
-            Income oldIncome = incomes[row];
-            Income newIncome = oldIncome;
-            newIncome.setType(type.toStdString());
-            newIncome.setDate(date.toStdString());
-            newIncome.setName(name.toStdString());
-            newIncome.setAmount(amount);
-            entryService->updateIncome(oldIncome, newIncome);
-            updated = true;
-        }
+    /* fetch edited values */
+    QString newDate = ui->dataTable->item(row,1)->text();
+    QString newName = ui->dataTable->item(row,2)->text();
+    bool ok = false;
+    double  newAmount = ui->dataTable->item(row,3)->text().toDouble(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Input", "Amount must be numeric.");
+        reentry = false;
+        return;
     }
 
-    if (updated) {
-        entryService->saveEntriesToFile();
-        updateChartAndTable(mode);
+    /* update the real object */
+    if (auto *ex = dynamic_cast<Expense*>(entry)) {
+        ex->setDate  (newDate.toStdString());
+        ex->setName  (newName.toStdString());
+        ex->setAmount(newAmount);
+    } else if (auto *in = dynamic_cast<Income*>(entry)) {
+        in->setDate  (newDate.toStdString());
+        in->setName  (newName.toStdString());
+        in->setAmount(newAmount);
     }
 
-    updating = false;
+    updateChartAndTable(ui->modeButton->text());
+    reentry = false;
 }
+
 void MainWindow::onTableContextMenu(const QPoint &pos) {
     QModelIndex index = ui->dataTable->indexAt(pos);
     if (!index.isValid()) return;
@@ -281,139 +284,129 @@ void MainWindow::updateTypeFilter(const QString &mode) {
     }
 }
 
+std::shared_ptr<Filter> MainWindow::createFilterChain() const
+{
+    using std::make_shared;
+
+    std::shared_ptr<Filter> chain = make_shared<BaseFilter>();
+
+    const QDate from = ui->dateEdit ->date();
+    const QDate to   = ui->dateEdit_2->date();
+    if (from != QDate(2000,1,1) || to != QDate::currentDate()) {
+        chain = make_shared<DateFilter>(chain,
+                                        from.toString("yyyy-MM-dd").toStdString(),
+                                        to  .toString("yyyy-MM-dd").toStdString());
+    }
+
+    bool minOk = false, maxOk = false;
+    double minA = ui->lineEdit_2->text().toDouble(&minOk);
+    double maxA = ui->lineEdit_3->text().toDouble(&maxOk);
+    if (minOk || maxOk) {
+        if (!minOk) minA = 0.0;
+        if (!maxOk) maxA = std::numeric_limits<double>::max();
+        chain = make_shared<AmountFilter>(chain, minA, maxA);
+    }
+
+    const QString t = ui->typeSelect->currentText();
+    if (t != "None")
+        chain = make_shared<TypeFilter>(chain, t.toStdString());
+
+    const QString n = ui->lineEdit->text().trimmed();
+    if (!n.isEmpty())
+        chain = make_shared<NameFilter>(chain, n.toStdString());
+
+    return chain;
+}
+
 
 void MainWindow::updateChartAndTable(const QString &mode)
 {
-    QPieSeries *series = new QPieSeries();
+    QSignalBlocker guard(ui->dataTable);
+    auto chain = createFilterChain();
 
-    double totalIncome = 0.0;
-    double totalExpense = 0.0;
+    double totalIncome = 0.0, totalExpense = 0.0;
+    for (const auto &i : entryService->getAllIncomes())  totalIncome  += i.getAmount();
+    for (const auto &e : entryService->getAllExpenses()) totalExpense += e.getAmount();
+    ui->totalBalance->setText(QString::number(totalIncome - totalExpense, 'f', 2) + " Eur");
 
-    auto incomes = entryService->getAllIncomes();
-    for (const auto& income : incomes) {
-        totalIncome += income.getAmount();
-    }
-
-    auto expenses = entryService->getAllExpenses();
-    for (const auto& expense : expenses) {
-        totalExpense += expense.getAmount();
-    }
-
-    double balance = totalIncome - totalExpense;
-    ui->totalBalance->setText(QString::number(balance, 'f', 2) + " Eur");
-
-    QLayout *oldLayout = ui->chartContainer->layout();
-    if (oldLayout) {
-        QLayoutItem *item;
-        while ((item = oldLayout->takeAt(0)) != nullptr) {
-            delete item->widget();
-            delete item;
-        }
-        delete oldLayout;
-    }
-
-
+    std::vector<Entry*> base;
     if (mode == "Expenses") {
+        const auto &all = entryService->getAllExpenses();
+        base.reserve(all.size());
+        for (const auto &e : all) base.push_back(const_cast<Expense*>(&e));
+    } else {                                     // Income
+        const auto &all = entryService->getAllIncomes();
+        base.reserve(all.size());
+        for (const auto &e : all) base.push_back(const_cast<Income*>(&e));
+    }
+    std::vector<Entry*> items = chain->apply(base);
 
-
-
-        ui->dataTable->setRowCount(static_cast<int>(expenses.size()));
-        ui->dataTable->setColumnCount(4);
-        ui->dataTable->setHorizontalHeaderLabels(QStringList() << "Type" << "Date" << "Name" << "Amount");
-
-        QMap<QString, double> totals;
-        for (int i = 0; i < expenses.size(); ++i) {
-            const auto &e = expenses[i];
-            QTableWidgetItem* typeItem = new QTableWidgetItem(QString::fromStdString(e.getType()));
-            typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
-            ui->dataTable->setItem(i, 0, typeItem);
-
-            ui->dataTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(e.getDate())));
-            ui->dataTable->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(e.getName())));
-            ui->dataTable->setItem(i, 3, new QTableWidgetItem(QString::number(e.getAmount())));
-            totals[QString::fromStdString(e.getType())] += e.getAmount();
-        }
-
-        int i = 0;
-        int totalItems = totals.size();
-
-        for (auto it = totals.begin(); it != totals.end(); ++it, ++i) {
-            QPieSlice* slice = series->append(it.key(), it.value());
-
-            // Generate a unique hue based on index
-            int hue = (360 * i) / totalItems;  // evenly spaced around color wheel
-            QColor color = QColor::fromHsv(hue, 200, 255);  // vibrant and bright
-
-            slice->setBrush(color);
-            slice->setBrush(color);
-            slice->setPen(QPen(Qt::NoPen));
-            slice->setLabelBrush(Qt::white);
-            slice->setLabelFont(QFont("Arial", 10));
-        }
-
-
-
-
-    } else if (mode == "Income") {
-        auto incomes = entryService->getAllIncomes();
-        ui->dataTable->setRowCount(static_cast<int>(incomes.size()));
-        ui->dataTable->setColumnCount(4);
-        ui->dataTable->setHorizontalHeaderLabels(QStringList() << "Type" << "Date" << "Name" << "Amount");
-
-        QMap<QString, double> totals;
-        for (int i = 0; i < incomes.size(); ++i) {
-            const auto &e = incomes[i];
-            ui->dataTable->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(e.getType())));
-            ui->dataTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(e.getDate())));
-            ui->dataTable->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(e.getName())));
-            ui->dataTable->setItem(i, 3, new QTableWidgetItem(QString::number(e.getAmount())));
-            totals[QString::fromStdString(e.getType())] += e.getAmount();
-        }
-
-        int i = 0;
-        int totalItems = totals.size();
-
-        for (auto it = totals.begin(); it != totals.end(); ++it, ++i) {
-            QPieSlice* slice = series->append(it.key(), it.value());
-
-            // Generate a unique hue based on index
-            int hue = (360 * i) / totalItems;  // evenly spaced around color wheel
-            QColor color = QColor::fromHsv(hue, 200, 255);  // vibrant and bright
-
-            slice->setBrush(color);
-            slice->setPen(QPen(Qt::NoPen));
-            slice->setLabelBrush(Qt::white);
-            slice->setLabelFont(QFont("Arial", 10));
-        }
-
-
+    if (QLayout *old = ui->chartContainer->layout()) {
+        while (QLayoutItem *it = old->takeAt(0)) { delete it->widget(); delete it; }
+        delete old;
     }
 
-    QChart *chart = new QChart();
+    ui->dataTable->clear();
+    ui->dataTable->setRowCount(static_cast<int>(items.size()));
+    ui->dataTable->setColumnCount(4);
+    ui->dataTable->setHorizontalHeaderLabels({"Type","Date","Name","Amount"});
+
+    QMap<QString,double> totals;
+    for (int row = 0; row < items.size(); ++row) {
+        if (mode == "Expenses") {
+            auto *ex = static_cast<Expense*>(items[row]);
+
+            auto *typeItem = new QTableWidgetItem(QString::fromStdString(ex->getType()));
+            typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
+            typeItem->setData(Qt::UserRole,
+                              QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(ex)));
+            ui->dataTable->setItem(row, 0, typeItem);
+
+            ui->dataTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(ex->getDate())));
+            ui->dataTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(ex->getName())));
+            ui->dataTable->setItem(row, 3, new QTableWidgetItem(QString::number(ex->getAmount())));
+            totals[QString::fromStdString(ex->getType())] += ex->getAmount();
+        } else {
+            auto *in = static_cast<Income*>(items[row]);
+
+            auto *typeItem = new QTableWidgetItem(QString::fromStdString(in->getType()));
+            typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
+            typeItem->setData(Qt::UserRole,
+                              QVariant::fromValue<quintptr>(reinterpret_cast<quintptr>(in)));
+            ui->dataTable->setItem(row, 0, typeItem);
+
+            ui->dataTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(in->getDate())));
+            ui->dataTable->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(in->getName())));
+            ui->dataTable->setItem(row, 3, new QTableWidgetItem(QString::number(in->getAmount())));
+            totals[QString::fromStdString(in->getType())] += in->getAmount();
+        }
+    }
+
+    QPieSeries *series = new QPieSeries();
+    int idx = 0, totalSlices = totals.size();
+    for (auto it = totals.cbegin(); it != totals.cend(); ++it, ++idx) {
+        auto *slice = series->append(it.key(), it.value());
+        int hue = (360 * idx) / (totalSlices == 0 ? 1 : totalSlices);
+        slice->setBrush(QColor::fromHsv(hue, 200, 255));
+        slice->setPen(Qt::NoPen);
+        slice->setLabelBrush(Qt::white);
+    }
+    if (series->count() == 0) return;
+
+    QChart *chart = new QChart;
     chart->addSeries(series);
-    chart->setBackgroundBrush(QBrush(QColor("#1e1e1e")));
-    chart->setTitleBrush(QBrush(Qt::white));
+    chart->setBackgroundBrush(QColor("#1e1e1e"));
+    chart->setTitleBrush(Qt::white);
     chart->setTitle(mode + " Pie Chart");
-
-
-
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignLeft);
     chart->legend()->setLabelColor(Qt::white);
-    chart->legend()->setFont(QFont("Arial", 10));
 
+    auto *view = new QChartView(chart);
+    view->setRenderHint(QPainter::Antialiasing);
 
-
-    for (auto slice : series->slices()) {
-        slice->setLabelBrush(Qt::white);
-        slice->setLabelFont(QFont("Arial", 10));
-        slice->setPen(QPen(Qt::NoPen));
-    }
-
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-
-    QVBoxLayout *layout = new QVBoxLayout(ui->chartContainer);
-    layout->addWidget(chartView);
+    auto *layout = new QVBoxLayout(ui->chartContainer);
     layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(view);
 }
+

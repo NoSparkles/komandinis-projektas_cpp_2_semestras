@@ -9,6 +9,7 @@
 
 class EntryDAO {
 private:
+
     std::vector<Income> incomes;
     std::vector<Expense> expenses;
     int nextIncomeId; // Tracks highest income ID
@@ -21,8 +22,9 @@ EntryDAO(std::string incomePath, std::string expensePath);
     ~EntryDAO();
 
     // CRUD operations
-    std::vector<Income> getAllIncomes();
-    std::vector<Expense> getAllExpenses();
+
+    const std::vector<Income>&  getAllIncomes();
+    const std::vector<Expense>& getAllExpenses();
     void addIncome(const Income& income);
     void addExpense(const Expense& expense);
     void updateIncome(const Income& oldIncome, const Income& newIncome);
