@@ -16,6 +16,11 @@
 #include <QFormLayout>
 #include <QDoubleSpinBox>
 #include <QDateEdit>
+#include <QFile>
+#include <QTextStream>
+#include <QFileDialog>
+#include <QMessageBox>
+
 
 #include "model/Income.h"
 #include "model/Expense.h"
@@ -339,7 +344,7 @@ void MainWindow::updateChartAndTable(const QString &mode)
         base.reserve(all.size());
         for (const auto &e : all) base.push_back(const_cast<Income*>(&e));
     }
-    std::vector<Entry*> items = chain->apply(base);
+    this->filteredItems = chain->apply(base);
 
     if (QLayout *old = ui->chartContainer->layout()) {
         while (QLayoutItem *it = old->takeAt(0)) { delete it->widget(); delete it; }
@@ -347,14 +352,14 @@ void MainWindow::updateChartAndTable(const QString &mode)
     }
 
     ui->dataTable->clear();
-    ui->dataTable->setRowCount(static_cast<int>(items.size()));
+    ui->dataTable->setRowCount(static_cast<int>(this->filteredItems.size()));
     ui->dataTable->setColumnCount(4);
     ui->dataTable->setHorizontalHeaderLabels({"Type","Date","Name","Amount"});
 
     QMap<QString,double> totals;
-    for (int row = 0; row < items.size(); ++row) {
+    for (int row = 0; row < this->filteredItems.size(); ++row) {
         if (mode == "Expenses") {
-            auto *ex = static_cast<Expense*>(items[row]);
+            auto *ex = static_cast<Expense*>(this->filteredItems[row]);
 
             auto *typeItem = new QTableWidgetItem(QString::fromStdString(ex->getType()));
             typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
@@ -367,7 +372,7 @@ void MainWindow::updateChartAndTable(const QString &mode)
             ui->dataTable->setItem(row, 3, new QTableWidgetItem(QString::number(ex->getAmount())));
             totals[QString::fromStdString(ex->getType())] += ex->getAmount();
         } else {
-            auto *in = static_cast<Income*>(items[row]);
+            auto *in = static_cast<Income*>(this->filteredItems[row]);
 
             auto *typeItem = new QTableWidgetItem(QString::fromStdString(in->getType()));
             typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
@@ -410,3 +415,33 @@ void MainWindow::updateChartAndTable(const QString &mode)
     layout->addWidget(view);
 }
 
+void MainWindow::on_exportButton_clicked() {
+    QString filePath = QFileDialog::getSaveFileName(this, "Save File", "", "CSV Files (*.csv);;All Files (*)");
+    if (filePath.isEmpty()) return;
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Cannot open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+
+    // Write header (Including ID)
+    QStringList headers = {"ID", "Type", "Date", "Name", "Amount"};
+    out << headers.join(",") << "\n";
+
+    // Iterate through filteredItems instead of dataTable
+    for (const auto &entry : filteredItems) {
+        QString id = QString::number(entry->getId());   // Assuming Entry has an `getId()` method
+        QString type = QString::fromStdString(entry->getType());
+        QString date = QString::fromStdString(entry->getDate());
+        QString name = QString::fromStdString(entry->getName());
+        QString amount = QString::number(entry->getAmount(), 'f', 2);
+
+        out << QStringList{id, type, date, name, amount}.join(",") << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Success", "Data exported successfully.");
+}

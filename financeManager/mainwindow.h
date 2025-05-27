@@ -38,6 +38,8 @@ private slots:
 
     void updateTypeFilter(const QString &mode);
 
+    void on_exportButton_clicked();
+
 private:
     std::shared_ptr<Filter> createFilterChain() const;
 
@@ -45,6 +47,7 @@ private:
 
     Ui::MainWindow *ui {nullptr};
     EntryService   *entryService {nullptr};
+    std::vector<Entry*> filteredItems;
 };
 
 #endif

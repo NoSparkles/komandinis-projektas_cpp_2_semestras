@@ -15,12 +15,16 @@ const std::vector<Expense>& EntryService::getAllExpenses() {
 
 // Add an income entry
 void EntryService::addIncome(const Income& income) {
-    entryDAO.addIncome(income);
+    this->entryDAO.IncrementNextIncomeId();
+    Income newIncome(this->entryDAO.getNextIncomeId(), income.getType(), income.getDate(), income.getName(), income.getAmount());
+    entryDAO.addIncome(newIncome);
 }
 
 // Add an expense entry
 void EntryService::addExpense(const Expense& expense) {
-    entryDAO.addExpense(expense);
+    this->entryDAO.IncrementNextExpenseId();
+    Expense newExpense(this->entryDAO.getNextExpenseId(), expense.getType(), expense.getDate(), expense.getName(), expense.getAmount());
+    entryDAO.addExpense(newExpense);
 }
 
 // Update an existing income entry

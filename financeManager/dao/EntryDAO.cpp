@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <iostream>
 
 // Constructor - Initialize IDs and load data from files
 EntryDAO::EntryDAO(std::string incomePath, std::string expensePath)
@@ -18,6 +19,19 @@ EntryDAO::~EntryDAO() {
     expenses.clear();
 }
 
+int EntryDAO::getNextIncomeId() {
+    return this->nextIncomeId;
+}
+int EntryDAO::getNextExpenseId() {
+    return this->nextExpenseId;
+}
+void EntryDAO::IncrementNextIncomeId() {
+    ++this->nextIncomeId;
+}
+void EntryDAO::IncrementNextExpenseId() {
+    ++this->nextExpenseId;
+}
+
 // Retrieve all incomes
 const std::vector<Income>&  EntryDAO::getAllIncomes() {
     return incomes;
@@ -31,14 +45,12 @@ const std::vector<Expense>& EntryDAO::getAllExpenses() {
 
 // Add new income entry
 void EntryDAO::addIncome(const Income& income) {
-    Income newIncome(++nextIncomeId, income.getType(), income.getDate(), income.getName(), income.getAmount());
-    incomes.push_back(newIncome);
+    incomes.push_back(income);
 }
 
 // Add new expense entry
 void EntryDAO::addExpense(const Expense& expense) {
-    Expense newExpense(++nextExpenseId, expense.getType(), expense.getDate(), expense.getName(), expense.getAmount());
-    expenses.push_back(newExpense);
+    expenses.push_back(expense);
 }
 
 // Update an existing income entry
@@ -132,11 +144,10 @@ void EntryDAO::loadFromFile() {
 
             int entryId = std::stoi(id);
             incomes.emplace_back(entryId, type, date, name, std::stod(amount));
-            nextIncomeId = std::max(nextIncomeId, entryId);
+            nextIncomeId = std::max(nextIncomeId, entryId); 
         }
         inIncome.close();
     }
-
     // Load Expense Data
     if (inExpense.is_open()) {
         std::getline(inExpense, line); // Skip header
