@@ -91,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->dataTable, &QTableWidget::customContextMenuRequested, this, &MainWindow::onTableContextMenu);
     connect(ui->dataTable, &QTableWidget::cellChanged, this, &MainWindow::onTableCellChanged);
+    connect(ui->exportButton, &QPushButton::clicked, this, &MainWindow::onExportButtonClicked);
 }
 
 MainWindow::~MainWindow()
@@ -415,7 +416,7 @@ void MainWindow::updateChartAndTable(const QString &mode)
     layout->addWidget(view);
 }
 
-void MainWindow::on_exportButton_clicked() {
+void MainWindow::onExportButtonClicked() {
     QString filePath = QFileDialog::getSaveFileName(this, "Save File", "", "CSV Files (*.csv);;All Files (*)");
     if (filePath.isEmpty()) return;
 

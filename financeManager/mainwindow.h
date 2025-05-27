@@ -38,7 +38,7 @@ private slots:
 
     void updateTypeFilter(const QString &mode);
 
-    void on_exportButton_clicked();
+    void onExportButtonClicked();
 
 private:
     std::shared_ptr<Filter> createFilterChain() const;
