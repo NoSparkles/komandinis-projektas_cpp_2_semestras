@@ -2,7 +2,8 @@
 
 // Constructor - Initializes DAO
 EntryService::EntryService(const std::string& incomePath, const std::string& expensePath)
-    : entryDAO(incomePath, expensePath) {}
+    : entryDAO(incomePath, expensePath) {
+}
 
 // Retrieve all incomes
 const std::vector<Income>&  EntryService::getAllIncomes()  {
@@ -15,16 +16,12 @@ const std::vector<Expense>& EntryService::getAllExpenses() {
 
 // Add an income entry
 void EntryService::addIncome(const Income& income) {
-    this->entryDAO.IncrementNextIncomeId();
-    Income newIncome(this->entryDAO.getNextIncomeId(), income.getType(), income.getDate(), income.getName(), income.getAmount());
-    entryDAO.addIncome(newIncome);
+    entryDAO.addIncome(income);
 }
 
 // Add an expense entry
 void EntryService::addExpense(const Expense& expense) {
-    this->entryDAO.IncrementNextExpenseId();
-    Expense newExpense(this->entryDAO.getNextExpenseId(), expense.getType(), expense.getDate(), expense.getName(), expense.getAmount());
-    entryDAO.addExpense(newExpense);
+    entryDAO.addExpense(expense);
 }
 
 // Update an existing income entry

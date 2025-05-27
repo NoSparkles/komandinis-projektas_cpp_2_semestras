@@ -3,14 +3,11 @@
 #include <vector>
 #include <string>
 
-#include "../model/Entry.h"
 #include "../model/Income.h"
 #include "../model/Expense.h"
 
 class EntryDAO {
 private:
-    int nextIncomeId; // Tracks highest income ID
-    int nextExpenseId; // Tracks highest expense ID
     std::vector<Income> incomes;
     std::vector<Expense> expenses;
     std::string incomePath;
@@ -21,10 +18,6 @@ EntryDAO(std::string incomePath, std::string expensePath);
     ~EntryDAO();
 
     // CRUD operations
-    int getNextIncomeId();
-    int getNextExpenseId();
-    void IncrementNextIncomeId();
-    void IncrementNextExpenseId();
 
     const std::vector<Income>&  getAllIncomes();
     const std::vector<Expense>& getAllExpenses();

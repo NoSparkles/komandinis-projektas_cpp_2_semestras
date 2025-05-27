@@ -1,8 +1,7 @@
 #include "Entry.h"
 
 // Constructors
-Entry::Entry(int id, const std::string& type, const std::string& date, const std::string& name, double amount){
-    this->setId(id);
+Entry::Entry(const std::string& type, const std::string& date, const std::string& name, double amount){
     this->setType(type);
     this->setDate(date);
     this->setName(name);
@@ -10,6 +9,7 @@ Entry::Entry(int id, const std::string& type, const std::string& date, const std
 }
 
 // Getters
+
 int Entry::getId() const {
     return id;
 }

@@ -252,10 +252,10 @@ void MainWindow::onAddButtonClicked() {
 
 
         if (mode == "Expenses") {
-            Expense newExpense(0, type.toStdString(), date.toStdString(), name.toStdString(), amount);
+            Expense newExpense(type.toStdString(), date.toStdString(), name.toStdString(), amount);
             entryService->addExpense(newExpense);
         } else {
-            Income newIncome(0, type.toStdString(), date.toStdString(), name.toStdString(), amount);
+            Income newIncome(type.toStdString(), date.toStdString(), name.toStdString(), amount);
             entryService->addIncome(newIncome);
         }
 

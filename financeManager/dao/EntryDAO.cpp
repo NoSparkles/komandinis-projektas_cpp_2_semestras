@@ -6,8 +6,7 @@
 #include <iostream>
 
 // Constructor - Initialize IDs and load data from files
-EntryDAO::EntryDAO(std::string incomePath, std::string expensePath)
-    : nextIncomeId(0), nextExpenseId(0) {
+EntryDAO::EntryDAO(std::string incomePath, std::string expensePath) {
     setIncomePath(incomePath);
     setExpensePath(expensePath);
     loadFromFile();
@@ -17,19 +16,6 @@ EntryDAO::EntryDAO(std::string incomePath, std::string expensePath)
 EntryDAO::~EntryDAO() {
     incomes.clear();
     expenses.clear();
-}
-
-int EntryDAO::getNextIncomeId() {
-    return this->nextIncomeId;
-}
-int EntryDAO::getNextExpenseId() {
-    return this->nextExpenseId;
-}
-void EntryDAO::IncrementNextIncomeId() {
-    ++this->nextIncomeId;
-}
-void EntryDAO::IncrementNextExpenseId() {
-    ++this->nextExpenseId;
 }
 
 // Retrieve all incomes
@@ -144,7 +130,8 @@ void EntryDAO::loadFromFile() {
 
             int entryId = std::stoi(id);
             incomes.emplace_back(entryId, type, date, name, std::stod(amount));
-            nextIncomeId = std::max(nextIncomeId, entryId); 
+            Income::setNextIncomeId(std::max(Income::getNextIncomeId(), entryId));
+            //nextIncomeId = std::max(nextIncomeId, entryId);
         }
         inIncome.close();
     }
@@ -163,7 +150,8 @@ void EntryDAO::loadFromFile() {
 
             int entryId = std::stoi(id);
             expenses.emplace_back(entryId, type, date, name, std::stod(amount));
-            nextExpenseId = std::max(nextExpenseId, entryId);
+            Expense::setNextExpenseId(std::max(Expense::getNextExpenseId(), entryId));
+            //nextExpenseId = std::max(nextExpenseId, entryId);
         }
         inExpense.close();
     }

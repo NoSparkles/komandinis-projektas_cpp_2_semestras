@@ -11,7 +11,7 @@ protected:
     std::string name;
     double amount;
 public:
-    Entry(int id, const std::string& type, const std::string& date, const std::string& name, double amount);
+    Entry(const std::string& type, const std::string& date, const std::string& name, double amount);
     virtual ~Entry() = default;
 
     int getId() const;
