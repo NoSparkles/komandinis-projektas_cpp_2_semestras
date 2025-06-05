@@ -86,7 +86,10 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 - **2025-05-07** — *13:00—15:00* — **120 min** 
   **Activity:** PSP veikla, Komandinis darbas
   **Comments:** Klasių diagrama
-
+**STAGE 3**
+- **2025-05-28** — *12:00—13:00* — **60 min** 
+  **Activity:** Programavimas
+  **Comments:** Front-End pakeitimas
 
 
 ### Robert Šatkevič
@@ -105,6 +108,13 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 - **2025-05-07** — *13:00—15:00* — **120 min** 
   **Activity:** PSP veikla, Komandinis darbas
   **Comments:** Klasių diagrama
+**STAGE 3**
+- **2025-05-27** - *15:00-15:30* - **30 min**
+  **Acitivity:** Programavimas
+  **Comments:** Exportavimo feature
+- **2025-05-27** - *16:00-16:30* - **30 min**
+**Acitivity:** Projektavimas, Programavimas
+**Comments:** Tobulinimas esamų klasių
 
 ### Dominykas Pavlavičius
 - **2025-04-25** — *10:00—11:40* — **100 min**
@@ -114,3 +124,10 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 - **2025-05-07** — *13:00—15:00* — **120 min** 
   **Activity:** PSP veikla, Komandinis darbas
   **Comments:** Klasių diagrama
+**STAGE 3**
+- **2025-05-28** — *18:00—19:00* — **60 min** 
+  **Activity:** Programavimas
+  **Comments:** Filtrų cpp failai
+- **2025-05-29** — *21:00—22:10* — **70 min** 
+  **Activity:** Programavimas
+  **Comments:** Sujungti filtrai su Front-end
