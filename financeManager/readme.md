@@ -11,6 +11,12 @@
 
 ---
 
+## Repository
+
+**GitHub:** [https://github.com/NoSparkles/komandinis-projektas_cpp_2_semestras.git](https://github.com/NoSparkles/komandinis-projektas_cpp_2_semestras.git)
+
+---
+
 ## Description
 The Finance Manager App is a comprehensive tool designed to help users manage their finances effectively. It allows users to track income and expenses, apply filters, and visualize data through tables and pie charts. The app also supports exporting filtered data for further analysis.
 
@@ -131,3 +137,13 @@ The Finance Manager App is a comprehensive tool designed to help users manage th
 - **2025-05-29** — *21:00—22:10* — **70 min** 
   **Activity:** Programavimas
   **Comments:** Sujungti filtrai su Front-end
+
+## Suvestinė
+Komandos darbo suvestinė: [Suvestinė.xlsx](Suvestinė.xlsx)
+
+## Video
+
+- [Demonstracinis vaizdo įrašas](demo.mp4)
+- [Aurimo darbo indėlis](Aurimo_projekto_dalis.mp4)
+- [Roberto darbo indėlis](Roberto_projekto_dalis.mp4)
+- [Dominyko darbo indėlis](Dominyko_projekto_dalis.mp4)

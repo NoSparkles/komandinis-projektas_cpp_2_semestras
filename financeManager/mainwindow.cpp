@@ -432,9 +432,8 @@ void MainWindow::onExportButtonClicked() {
     QStringList headers = {"ID", "Type", "Date", "Name", "Amount"};
     out << headers.join(",") << "\n";
 
-    // Iterate through filteredItems instead of dataTable
     for (const auto &entry : filteredItems) {
-        QString id = QString::number(entry->getId());   // Assuming Entry has an `getId()` method
+        QString id = QString::number(entry->getId());
         QString type = QString::fromStdString(entry->getType());
         QString date = QString::fromStdString(entry->getDate());
         QString name = QString::fromStdString(entry->getName());
